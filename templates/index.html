@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima</title>
+</head>
+<body>
+    <form method="post">
+        <input type="text" name="ciudad" placeholder="Ingresar ciudad" required>
+        <button type="submit">Mostrar clima</button>
+    </form>
+
+    {% if ciudad %}
+        <h2>Tiempo en {{ ciudad }}</h2>
+        <p>Temperatura: {{ temp }} °C</p>
+        <p>Descripción: {{ descripcion }}</p>
+        <p>{{ descripcion }}</p>
+    {% endif %}
+    
+</body>
+</html>
