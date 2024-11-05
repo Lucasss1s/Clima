@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // Función para mostrar el pronóstico del día seleccionado
+        function mostrarPronostico(dia) {
+            const dias = document.querySelectorAll('.pronostico-dia');
+            dias.forEach(d => d.style.display = 'none');  // Oculta todos los pronósticos
+            document.getElementById(dia).style.display = 'block';  // Muestra el pronóstico del día seleccionado
+        }
+    </script>
 </head>
 <body>
     <form method="post">
@@ -13,10 +22,45 @@
 
     {% if ciudad %}
         <h2>Tiempo en {{ ciudad }}</h2>
-        <p>Temperatura: {{ temp }} °C</p>
-        <p>Descripción: {{ descripcion }}</p>
-        <p>{{ descripcion }}</p>
+        <div class="current-weather">
+            <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
+        </div>
+
+        <!-- Botones para los días -->
+        <div class="dias-botones">
+            {% for dia in pronostico_por_dia %}
+                <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
+            {% endfor %}
+        </div>
+
+        <!-- Pronóstico detallado por día -->
+        <div class="weather-container">
+            {% for dia, pronosticos in pronostico_por_dia.items() %}
+                <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
+                    <h3>Pronóstico para {{ dia }}</h3>
+                    {% for pronos in pronosticos %}
+                        <div class="weather-card">
+                            <div class="icon">
+                                {% if 'clear' in pronos.descripcion.lower() %}
+                                    ☀️
+                                {% elif 'rain' in pronos.descripcion.lower() %}
+                                    🌧️
+                                {% elif 'cloud' in pronos.descripcion.lower() %}
+                                    ☁️
+                                {% else %}
+                                    🌩️
+                                {% endif %}
+                            </div>
+                            <div class="details">
+                                <p><strong>Fecha:</strong> {{ pronos.fecha }}</p>
+                                <p><strong>Temperatura:</strong> {{ pronos.temp }}°C</p>
+                                <p><strong>Descripción:</strong> {{ pronos.descripcion }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
-    
 </body>
 </html>

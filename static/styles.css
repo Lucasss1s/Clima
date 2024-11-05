@@ -1,0 +1,136 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+form input[type="text"] {
+    padding: 10px;
+    width: 70%;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+form button {
+    padding: 10px;
+    width: 30%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Header Styles */
+h2 {
+    color: #333;
+    text-align: center;
+    margin-top: 0;
+}
+
+/* Weather Card Container */
+.weather-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Weather Card Styles */
+.weather-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    transition: transform 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-5px);
+}
+
+.weather-card strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.weather-card .temp {
+    font-size: 24px;
+    color: #007bff;
+}
+
+.weather-card .details {
+    flex: 1;
+    padding-left: 15px;
+}
+
+.weather-card .details p {
+    margin: 2px 0;
+}
+
+.weather-card .icon {
+    font-size: 30px;
+    color: #007bff;
+}
+
+/* Styling for current weather section */
+.current-weather {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #007bff;
+}
+
+.weather-card .toggle-details {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #007bff;
+    margin-top: 5px;
+    transition: transform 0.3s ease;
+}
+
+.extra-details {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+    border-radius: 4px;
+    color: #555;
+}
+
+
+
