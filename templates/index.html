@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Función para mostrar el pronóstico del día seleccionado
         function mostrarPronostico(dia) {
@@ -25,6 +26,83 @@
         <div class="current-weather">
             <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
         </div>
+
+        <div class="chart-container">
+            <canvas id="temperatureChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="precipitationChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="airQualityChart"></canvas>
+        </div>
+
+        <script>
+            // Ejemplo de datos. Modifícalo para integrar los datos reales del clima
+            const temperatureData = [12, 15, 17, 20, 22, 19, 16];
+            const precipitationData = [5, 10, 8, 20, 25, 15, 12];
+            const airQualityData = [50, 55, 60, 65, 70, 75, 80];
+
+            // Configuración de los gráficos
+            const ctxTemp = document.getElementById('temperatureChart').getContext('2d');
+            new Chart(ctxTemp, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Temperatura (°C)',
+                        data: temperatureData,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            const ctxPrecip = document.getElementById('precipitationChart').getContext('2d');
+            new Chart(ctxPrecip, {
+                type: 'bar',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Precipitación (mm)',
+                        data: precipitationData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            const ctxAir = document.getElementById('airQualityChart').getContext('2d');
+            new Chart(ctxAir, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Calidad del Aire (AQI)',
+                        data: airQualityData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        </script>
+    {% endif %}
 
         <!-- Botones para los días -->
         <div class="dias-botones">

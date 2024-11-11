@@ -132,5 +132,10 @@ h2 {
     color: #555;
 }
 
+.chart-container {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
 
 
