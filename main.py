@@ -23,7 +23,7 @@ def index():
             descripcion = data_clima['weather'][0]['description']
             clima_actual = {'temp': temp, 'descripcion': descripcion}
         
-        # Pronóstico de 5 días
+        # Pronostico de 5 dias
         url_pronostico = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
         res_pronostico = requests.get(url_pronostico)
         data_pronostico = res_pronostico.json()

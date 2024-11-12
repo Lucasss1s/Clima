@@ -6,11 +6,10 @@
     <title>Clima</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
-        // Función para mostrar el pronóstico del día seleccionado
         function mostrarPronostico(dia) {
             const dias = document.querySelectorAll('.pronostico-dia');
-            dias.forEach(d => d.style.display = 'none');  // Oculta todos los pronósticos
-            document.getElementById(dia).style.display = 'block';  // Muestra el pronóstico del día seleccionado
+            dias.forEach(d => d.style.display = 'none');  
+            document.getElementById(dia).style.display = 'block';  
         }
     </script>
 </head>
@@ -26,14 +25,14 @@
             <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
         </div>
 
-        <!-- Botones para los días -->
+        <!-- Clima actual -->
         <div class="dias-botones">
             {% for dia in pronostico_por_dia %}
                 <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
             {% endfor %}
         </div>
 
-        <!-- Pronóstico detallado por día -->
+        <!-- Clima por dia -->
         <div class="weather-container">
             {% for dia, pronosticos in pronostico_por_dia.items() %}
                 <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
@@ -51,7 +50,7 @@
                                     🌩️
                                 {% endif %}
                             </div>
-                            <div class="details">
+                            <div class="detalles">
                                 <p><strong>Fecha:</strong> {{ pronos.fecha }}</p>
                                 <p><strong>Temperatura:</strong> {{ pronos.temp }}°C</p>
                                 <p><strong>Descripción:</strong> {{ pronos.descripcion }}</p>
