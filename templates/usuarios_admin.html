@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            <a href="/login">Iniciar Sesion</a>
+            <a href="/registro">Registro</a> 
+        </div>
+    </nav>
+
+    <h1>Gestión de Usuarios</h1>
+
+    <!-- Tabla con usuarios -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Actualizar Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario[0] }}</td>
+                    <td>{{ usuario[1] }}</td>
+                    <td>{{ usuario[2] }}</td>
+                    <td>{{ usuario[3] }}</td>
+                    <td>
+                        <form method="POST" action="/usuarios_admin">
+                            <input type="hidden" name="id_usuario" value="{{ usuario[0] }}">
+                            <select name="nuevo_rol">
+                                <option value="usuario" {% if usuario[3] == 'usuario' %}selected{% endif %}>Usuario</option>
+                                <option value="admin" {% if usuario[3] == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                            <button type="submit" name="accion" value="actualizar">Actualizar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="/usuarios_admin">
+                            <input type="hidden" name="id_usuario" value="{{ usuario[0] }}">
+                            <button type="submit" name="accion" value="eliminar">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
