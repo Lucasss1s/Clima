@@ -7,23 +7,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
 <body>
-    <!-- Barra de navegación -->
     <nav>
         <div class="menu-links">
             <a href="/">Inicio</a>
-            <a href="/login">Iniciar Sesion</a>  <!-- Puedes agregar más enlaces si lo deseas -->
-            <a href="/registro">Registro</a> <!-- Enlace para ir al registro -->
+            <a href="/login">Iniciar Sesión</a>
         </div>
     </nav>
 
     <h2>Registrar nuevo usuario</h2>
+    
 
     <form method="post">
+        <label for="nombre">Nombre:</label>
         <input type="text" name="nombre" placeholder="Nombre" required>
+        
+        <label for="email">Email:</label>
         <input type="email" name="email" placeholder="Correo electrónico" required>
+        
+        <label for="contraseña">Contraseña:</label>
         <input type="password" name="contraseña" placeholder="Contraseña" required>
         <button type="submit">Registrar</button>
     </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
 
     {% if mensaje %}
         <p>{{ mensaje }}</p>

@@ -10,6 +10,8 @@ from bd.usuario import (
     crear_tabla_usuario
 )
 import requests
+from datos import obtener_clima_actual, obtener_pronostico
+from graficos import crear_grafico
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
@@ -29,34 +31,17 @@ def index():
     pronostico_por_dia = {}
 
     if request.method == 'POST':
+        # Ciudad ingresada
         ciudad = request.form['ciudad']
 
         # Clima actual
-        url_clima = f"https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
-        res_clima = requests.get(url_clima)
-        data_clima = res_clima.json()
-
-        if res_clima.status_code == 200:
-            temp = data_clima['main']['temp']
-            descripcion = data_clima['weather'][0]['description']
-            clima_actual = {'temp': temp, 'descripcion': descripcion}
+        clima_actual = obtener_clima_actual(ciudad)
         
-        # Pronóstico de 5 días
-        url_pronostico = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
-        res_pronostico = requests.get(url_pronostico)
-        data_pronostico = res_pronostico.json()
-
-        if res_pronostico.status_code == 200:
-            for item in data_pronostico['list']:
-                fecha = datetime.strptime(item['dt_txt'], '%Y-%m-%d %H:%M:%S')
-                dia = fecha.strftime('%A')
-                
-                if dia not in pronostico_por_dia:
-                    pronostico_por_dia[dia] = []
-
-                temp = item['main']['temp']
-                descripcion = item['weather'][0]['description']
-                pronostico_por_dia[dia].append({'fecha': item['dt_txt'], 'temp': temp, 'descripcion': descripcion })
+        # Pronostico de 5 dias
+        pronostico_por_dia = obtener_pronostico(ciudad)
+        
+        # Grafico
+        crear_grafico(pronostico_por_dia)
     
     return render_template('index.html', ciudad=ciudad, pronostico_por_dia=pronostico_por_dia, clima_actual=clima_actual)
 
@@ -76,7 +61,6 @@ def registro():
 
         # Agregar el usuario
         agregar_usuario(conn, nombre, email, contraseña)
-        flash("Registro exitoso! Ahora puedes iniciar sesión.", 'success')
         return redirect(url_for('login')) 
 
     return render_template('registro.html')
@@ -94,13 +78,12 @@ def login():
         if usuario:
             session['usuario_id'] = usuario[0]  # Guardar el ID del usuario en la sesión
             session['rol'] = usuario[4]         # Guardar el rol en la sesión
+            session['nombre_usuario'] = usuario[1]  # Guardar el nombre del usuario en la sesión
 
             # Redirigir según el rol
             if usuario[4] == 'admin':
-                flash("Inicio de sesión como administrador exitoso", 'success')
                 return redirect(url_for('usuarios_admin')) 
             else:
-                flash("Inicio de sesión exitoso", 'success')
                 return redirect(url_for('index')) 
         else:
             flash("Email o contraseña incorrectos.", 'error')
@@ -143,9 +126,18 @@ def usuarios_admin():
 
     return render_template('usuarios_admin.html', usuarios=usuarios)
 
+@app.route('/favoritos')
+def favoritos():
+    if 'usuario_id' not in session:
+        flash('Debes iniciar sesión para acceder a tus favoritos', 'warning')
+        return redirect(url_for('login'))
+    # Aquí puedes agregar la lógica para mostrar los favoritos del usuario.
+    return render_template('favoritos.html')
+
 @app.route('/logout')
 def logout():
     session.pop('usuario_id', None)
+    session.pop('nombre_usuario', None)
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
