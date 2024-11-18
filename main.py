@@ -1,46 +1,55 @@
 from flask import Flask, render_template, request
 import requests
-from datetime import datetime, timedelta
 
-app = Flask(__name__)  # iniciar flask
+from datos import *
+from graficos import crear_grafico
+
+app = Flask(__name__)
+app.secret_key = 'tu_clave_secreta'
+
+@app.before_request
+def setup_database():
+    inicializar_base_de_datos()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     ciudad = ""
     clima_actual = {}
     pronostico_por_dia = {}
+    provincias_o_estados = []
+    pais_actual = ""
+    clima_por_provincia = {}
 
     if request.method == 'POST':
+        # Ciudad ingresada
         ciudad = request.form['ciudad']
 
         # Clima actual
-        url_clima = f"https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
-        res_clima = requests.get(url_clima)
-        data_clima = res_clima.json()
-
-        if res_clima.status_code == 200:
-            temp = data_clima['main']['temp']
-            descripcion = data_clima['weather'][0]['description']
-            clima_actual = {'temp': temp, 'descripcion': descripcion}
+        clima_actual = obtener_clima_actual(ciudad)
         
-        # Pronóstico de 5 días
-        url_pronostico = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
-        res_pronostico = requests.get(url_pronostico)
-        data_pronostico = res_pronostico.json()
+        # Pronostico de 5 dias
+        pronostico_por_dia = obtener_pronostico(ciudad)
+        
+        # Obtener provincias o estados 
+        provincias_o_estados, pais_actual = obtener_provincias_o_estados_api(ciudad)
+        
+        # Clima para cada provincia
+        for provincia in provincias_o_estados:
+            clima_por_provincia[provincia] = obtener_clima_actual(provincia)
 
-        if res_pronostico.status_code == 200:
-            for item in data_pronostico['list']:
-                fecha = datetime.strptime(item['dt_txt'], '%Y-%m-%d %H:%M:%S')
-                dia = fecha.strftime('%A')
-                
-                if dia not in pronostico_por_dia:
-                    pronostico_por_dia[dia] = []
 
-                temp = item['main']['temp']
-                descripcion = item['weather'][0]['description']
-                pronostico_por_dia[dia].append({'fecha': item['dt_txt'], 'temp': temp, 'descripcion': descripcion })
+        # Grafico
+        crear_grafico(pronostico_por_dia)
     
-    return render_template('index.html', ciudad=ciudad, pronostico_por_dia=pronostico_por_dia, clima_actual=clima_actual)
+    return render_template('index.html', ciudad=ciudad, pronostico_por_dia=pronostico_por_dia, clima_actual=clima_actual,
+                            provincias_o_estados=provincias_o_estados,pais_actual=pais_actual, clima_por_provincia=clima_por_provincia)
 
-if __name__ == '__main__':
+# Rutas para otras funciones
+app.add_url_rule('/registro', view_func=registro, methods=['GET', 'POST'])
+app.add_url_rule('/login', view_func=login, methods=['GET', 'POST'])
+app.add_url_rule('/usuarios_admin', view_func=usuarios_admin, methods=['GET', 'POST'])
+app.add_url_rule('/favoritos', view_func=favoritos)
+app.add_url_rule('/logout', view_func=logout)
+
+if __name__ == "__main__":
     app.run(debug=True)

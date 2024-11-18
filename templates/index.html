@@ -1,21 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Función para mostrar el pronóstico del día seleccionado
         function mostrarPronostico(dia) {
             const dias = document.querySelectorAll('.pronostico-dia');
-            dias.forEach(d => d.style.display = 'none');  // Oculta todos los pronósticos
-            document.getElementById(dia).style.display = 'block';  // Muestra el pronóstico del día seleccionado
+            dias.forEach(d => d.style.display = 'none');  
+            document.getElementById(dia).style.display = 'block';  
+        }
+
+        function toggleMenu() {
+            var dropdownContent = document.getElementById('dropdown-content');
+            dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
         }
     </script>
 </head>
 <body>
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            {% if 'usuario_id' in session %}
+                <!-- Menú desplegable con el nombre del usuario -->
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </nav>
+
     <form method="post">
         <input type="text" name="ciudad" placeholder="Ingresar ciudad" required>
         <button type="submit">Mostrar clima</button>
@@ -27,91 +48,14 @@
             <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
         </div>
 
-        <div class="chart-container">
-            <canvas id="temperatureChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="precipitationChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="airQualityChart"></canvas>
-        </div>
-
-        <script>
-            // Ejemplo de datos. Modifícalo para integrar los datos reales del clima
-            const temperatureData = [12, 15, 17, 20, 22, 19, 16];
-            const precipitationData = [5, 10, 8, 20, 25, 15, 12];
-            const airQualityData = [50, 55, 60, 65, 70, 75, 80];
-
-            // Configuración de los gráficos
-            const ctxTemp = document.getElementById('temperatureChart').getContext('2d');
-            new Chart(ctxTemp, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Temperatura (°C)',
-                        data: temperatureData,
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true,
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            const ctxPrecip = document.getElementById('precipitationChart').getContext('2d');
-            new Chart(ctxPrecip, {
-                type: 'bar',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Precipitación (mm)',
-                        data: precipitationData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            const ctxAir = document.getElementById('airQualityChart').getContext('2d');
-            new Chart(ctxAir, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Calidad del Aire (AQI)',
-                        data: airQualityData,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        fill: true,
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-        </script>
-    {% endif %}
-
-        <!-- Botones para los días -->
+        <!-- Clima actual -->
         <div class="dias-botones">
             {% for dia in pronostico_por_dia %}
                 <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
             {% endfor %}
         </div>
 
-        <!-- Pronóstico detallado por día -->
+        <!-- Clima por dia -->
         <div class="weather-container">
             {% for dia, pronosticos in pronostico_por_dia.items() %}
                 <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
@@ -129,7 +73,7 @@
                                     🌩️
                                 {% endif %}
                             </div>
-                            <div class="details">
+                            <div class="detalles">
                                 <p><strong>Fecha:</strong> {{ pronos.fecha }}</p>
                                 <p><strong>Temperatura:</strong> {{ pronos.temp }}°C</p>
                                 <p><strong>Descripción:</strong> {{ pronos.descripcion }}</p>
@@ -140,5 +84,52 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    {% if provincias_o_estados %}
+    <h3>Principales ciudades o provincias</h3>
+    <table class="tabla-clima">
+        <tr>
+            {% for provincia in provincias_o_estados %}
+                <td>
+                    <div class="card-clima-horizontal">
+                        <div class="icono">
+                            {% if clima_por_provincia[provincia] %}
+                                {% if 'clear' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☀️
+                                {% elif 'rain' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    🌧️
+                                {% elif 'cloud' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☁️
+                                {% else %}
+                                    🌩️
+                                {% endif %}
+                            {% else %}
+                                ❓
+                            {% endif %}
+                        </div>
+                        <div class="detalles">
+                            <h4>{{ provincia }}</h4>
+                            {% if clima_por_provincia[provincia] %}
+                                <p>{{ clima_por_provincia[provincia]['temp'] }}°C</p>
+                            {% else %}
+                                <p>No disponible</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                {% if loop.index % 4 == 0 %} <!-- Agrupar en filas de 4 -->
+        </tr><tr>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+    {% endif %}
+
+
+
+    
+
+    <!--Grafico de temperaturas maximas-->
+   <!--  <img  src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;"> -->
 </body>
 </html>
