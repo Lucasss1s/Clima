@@ -1,0 +1,263 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+form input[type="text"] {
+    padding: 10px;
+    width: 70%;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+form button {
+    padding: 10px;
+    width: 30%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+    margin-top: 0;
+}
+
+.weather-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.weather-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    transition: transform 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-5px);
+}
+
+.weather-card strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.weather-card .temp {
+    font-size: 24px;
+    color: #007bff;
+}
+
+.weather-card .detalles {
+    flex: 1;
+    padding-left: 15px;
+}
+
+.weather-card .detalles p {
+    margin: 2px 0;
+}
+
+.weather-card .icon {
+    font-size: 30px;
+    color: #007bff;
+}
+
+.current-weather {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #007bff;
+}
+
+.weather-card .toggle-detalles {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #007bff;
+    margin-top: 5px;
+    transition: transform 0.3s ease;
+}
+
+.extra-detalles {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+    border-radius: 4px;
+    color: #555;
+}
+
+
+.tabla-clima {
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.tabla-clima td {
+    padding: 10px; 
+    vertical-align: middle;
+    border: rgba(49, 49, 49, 0.685);
+}
+
+.card-clima-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 8px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 200px; 
+    max-width: 200px; 
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.card-clima-horizontal .icono {
+    flex: 0.3;
+    font-size: 30px; 
+    text-align: center;
+    margin-right: 5px; 
+}
+
+.card-clima-horizontal .detalles {
+    flex: 0.7;
+    text-align: left;
+    overflow: hidden; 
+}
+
+.card-clima-horizontal .detalles h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.card-clima-horizontal .detalles p {
+    margin: 5px 0 0 0;
+    font-size: 13px;
+}
+
+/* Barra de navegación */
+nav {
+    background-color: #333;
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+nav a:hover {
+    background-color: #575757;
+}
+
+.menu-links {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end; 
+    width: 100%;
+    padding-right: 20px;  
+}
+/* Estilos para el menú desplegable */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 10;  /* Asegura que el menú esté por encima de otros elementos */
+}
+
+.dropdown-btn {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-btn:hover {
+    background-color: #45a049;
+}
+
+.dropdown-content {
+    display: none; /* Inicialmente oculto */
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Asegura que el contenido esté encima de otros elementos */
+    border-radius: 5px;
+    margin-top: 10px;
+    right: 0; /* Alinea el menú a la derecha */
+    padding: 0;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+/* Mostrar el menú desplegable cuando se haga clic */
+.dropdown.open .dropdown-content {
+    display: block;
+}
+
+

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function mostrarPronostico(dia) {
+            const dias = document.querySelectorAll('.pronostico-dia');
+            dias.forEach(d => d.style.display = 'none');  
+            document.getElementById(dia).style.display = 'block';  
+        }
+
+        function toggleMenu() {
+            var dropdownContent = document.getElementById('dropdown-content');
+            dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            {% if 'usuario_id' in session %}
+                <!-- Menú desplegable con el nombre del usuario -->
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <form method="post">
+        <input type="text" name="ciudad" placeholder="Ingresar ciudad" required>
+        <button type="submit">Mostrar clima</button>
+    </form>
+
+    {% if ciudad %}
+        <h2>Tiempo en {{ ciudad }}</h2>
+        <div class="current-weather">
+            <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
+        </div>
+
+        <!-- Clima actual -->
+        <div class="dias-botones">
+            {% for dia in pronostico_por_dia %}
+                <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
+            {% endfor %}
+        </div>
+
+        <!-- Clima por dia -->
+        <div class="weather-container">
+            {% for dia, pronosticos in pronostico_por_dia.items() %}
+                <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
+                    <h3>Pronóstico para {{ dia }}</h3>
+                    {% for pronos in pronosticos %}
+                        <div class="weather-card">
+                            <div class="icon">
+                                {% if 'clear' in pronos.descripcion.lower() %}
+                                    ☀️
+                                {% elif 'rain' in pronos.descripcion.lower() %}
+                                    🌧️
+                                {% elif 'cloud' in pronos.descripcion.lower() %}
+                                    ☁️
+                                {% else %}
+                                    🌩️
+                                {% endif %}
+                            </div>
+                            <div class="detalles">
+                                <p><strong>Fecha:</strong> {{ pronos.fecha }}</p>
+                                <p><strong>Temperatura:</strong> {{ pronos.temp }}°C</p>
+                                <p><strong>Descripción:</strong> {{ pronos.descripcion }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if provincias_o_estados %}
+    <h3>Principales ciudades o provincias</h3>
+    <table class="tabla-clima">
+        <tr>
+            {% for provincia in provincias_o_estados %}
+                <td>
+                    <div class="card-clima-horizontal">
+                        <div class="icono">
+                            {% if clima_por_provincia[provincia] %}
+                                {% if 'clear' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☀️
+                                {% elif 'rain' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    🌧️
+                                {% elif 'cloud' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☁️
+                                {% else %}
+                                    🌩️
+                                {% endif %}
+                            {% else %}
+                                ❓
+                            {% endif %}
+                        </div>
+                        <div class="detalles">
+                            <h4>{{ provincia }}</h4>
+                            {% if clima_por_provincia[provincia] %}
+                                <p>{{ clima_por_provincia[provincia]['temp'] }}°C</p>
+                            {% else %}
+                                <p>No disponible</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                {% if loop.index % 4 == 0 %} <!-- Agrupar en filas de 4 -->
+        </tr><tr>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+    {% endif %}
+
+
+
+    
+
+    <!--Grafico de temperaturas maximas-->
+   <!--  <img  src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;"> -->
+</body>
+</html>

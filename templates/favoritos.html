@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function mostrarPronostico(dia) {
+            const dias = document.querySelectorAll('.pronostico-dia');
+            dias.forEach(d => d.style.display = 'none');  
+            document.getElementById(dia).style.display = 'block';  
+        }
+
+        function toggleMenu() {
+            var dropdown = document.querySelector('.dropdown');
+            dropdown.classList.toggle('open'); // Añadir o quitar la clase 'open' para mostrar/ocultar el menú
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            {% if 'usuario_id' in session %}
+                <!-- Menú desplegable con el nombre del usuario -->
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <h1>Favoritos</h1>
+    <p>Aquí estarán tus ciudades favoritas.</p>
+    <!-- Aquí puedes mostrar la lista de favoritos del usuario, por ejemplo: -->
+    <ul>
+        <!-- Ejemplo de ciudades favoritas -->
+        <li>Ciudad 1</li>
+        <li>Ciudad 2</li>
+    </ul>
+</body>
+</html>
