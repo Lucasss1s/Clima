@@ -161,8 +161,14 @@ if response.status_code == 200:
 
     #print(df_clima.head(30))  
 
+<<<<<<< HEAD
 else:
     print(f'Error al acceder a la página: {response.status_code}')
+=======
+    else:
+        print(f'Error al acceder a la página: {response.status_code}')
+        return None
+>>>>>>> 3771588462c77f6dc01288992f3ddbc960077bca
 
 # Funciones de autenticación y administración de usuarios
 def inicializar_base_de_datos():
