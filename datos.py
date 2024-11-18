@@ -3,16 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime, timedelta
 from flask import render_template, request, redirect, url_for, flash, session
-from bd.usuario import (
-    crear_conexion, 
-    agregar_usuario, 
-    verificar_login, 
-    obtener_usuario_por_email, 
-    obtener_todos_los_usuarios, 
-    actualizar_rol_usuario, 
-    eliminar_usuario,
-    crear_tabla_usuario
-)
+from bd.usuario import *
 from graficos import crear_grafico
 
 # Funciones para traer el clima actual y a 5 días
@@ -161,14 +152,8 @@ if response.status_code == 200:
 
     #print(df_clima.head(30))  
 
-<<<<<<< HEAD
 else:
     print(f'Error al acceder a la página: {response.status_code}')
-=======
-    else:
-        print(f'Error al acceder a la página: {response.status_code}')
-        return None
->>>>>>> 3771588462c77f6dc01288992f3ddbc960077bca
 
 # Funciones de autenticación y administración de usuarios
 def inicializar_base_de_datos():
