@@ -2,7 +2,6 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f4f8;
     margin: 0;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,7 +16,8 @@ form {
     border-radius: 8px;
     width: 100%;
     max-width: 500px;
-    margin-bottom: 20px;
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 form input[type="text"] {
@@ -181,5 +181,83 @@ h2 {
     font-size: 13px;
 }
 
+/* Barra de navegación */
+nav {
+    background-color: #333;
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+nav a:hover {
+    background-color: #575757;
+}
+
+.menu-links {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end; 
+    width: 100%;
+    padding-right: 20px;  
+}
+/* Estilos para el menú desplegable */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 10;  /* Asegura que el menú esté por encima de otros elementos */
+}
+
+.dropdown-btn {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-btn:hover {
+    background-color: #45a049;
+}
+
+.dropdown-content {
+    display: none; /* Inicialmente oculto */
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Asegura que el contenido esté encima de otros elementos */
+    border-radius: 5px;
+    margin-top: 10px;
+    right: 0; /* Alinea el menú a la derecha */
+    padding: 0;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+/* Mostrar el menú desplegable cuando se haga clic */
+.dropdown.open .dropdown-content {
+    display: block;
+}
 
 
