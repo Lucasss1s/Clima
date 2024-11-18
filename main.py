@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request
 import requests
-
 from datos import *
-from graficos import crear_grafico
+from graficos import *
 
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta'
@@ -50,6 +49,14 @@ app.add_url_rule('/login', view_func=login, methods=['GET', 'POST'])
 app.add_url_rule('/usuarios_admin', view_func=usuarios_admin, methods=['GET', 'POST'])
 app.add_url_rule('/favoritos', view_func=favoritos)
 app.add_url_rule('/logout', view_func=logout)
+
+
+
+#Radar de lluvia
+@app.route('/radar')
+def radar():
+    mapa_html = crear_radar() 
+    return render_template('radar.html', mapa_html=mapa_html)
 
 if __name__ == "__main__":
     app.run(debug=True)

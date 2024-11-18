@@ -23,7 +23,6 @@
         <div class="menu-links">
             <a href="/">Inicio</a>
             {% if 'usuario_id' in session %}
-                <!-- Menú desplegable con el nombre del usuario -->
                 <div class="dropdown">
                     <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
                     <div id="dropdown-content" class="dropdown-content">
@@ -34,6 +33,7 @@
             {% else %}
                 <a href="/login">Iniciar Sesión</a>
             {% endif %}
+            <a href="/radar">Radar de lluvia</a>
         </div>
     </nav>
 

@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime, timedelta
 from flask import render_template, request, redirect, url_for, flash, session
+import folium
 from bd.usuario import *
-from graficos import crear_grafico
+from graficos import *
 
 # Funciones para traer el clima actual y a 5 días
 def obtener_clima_actual(ciudad):
@@ -19,7 +20,6 @@ def obtener_clima_actual(ciudad):
             "temp_min": round(data["main"]["temp_min"])
         }
         return clima
-
 
 def obtener_pronostico(ciudad):
     url = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
@@ -98,7 +98,6 @@ def obtener_provincias_y_clima(ciudad):
 
 
 
-
 # Scrap para obtener datos del clima del mes actual
 url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
 
@@ -154,6 +153,9 @@ if response.status_code == 200:
 
 else:
     print(f'Error al acceder a la página: {response.status_code}')
+
+
+
 
 # Funciones de autenticación y administración de usuarios
 def inicializar_base_de_datos():
@@ -239,3 +241,34 @@ def logout():
     session.pop('usuario_id', None)
     session.pop('nombre_usuario', None)
     return redirect(url_for('index'))
+
+
+
+
+#Radar de lluvias tiempo real
+def crear_radar():
+    mapa = folium.Map(location=[0, 0], zoom_start=2)
+
+    api_key = "36702f1bcf086e4be0e9d8ecb12c2147"
+    base_url = "https://tile.openweathermap.org/map/"
+
+    horas = [-3, -2, -1, 0, 1, 2, 3] 
+    capas = []
+
+    for hora in horas:
+        capas.append({
+            "nombre": f"Precipitación ({'+' if hora > 0 else ''}{hora}h)",
+            "url": f"{base_url}precipitation_new/{{z}}/{{x}}/{{y}}.png?appid={api_key}&tm={hora}",
+        })
+
+    for capa in capas:
+        folium.TileLayer(
+            tiles=capa["url"],
+            attr="OpenWeatherMap",
+            name=capa["nombre"],
+            overlay=True
+        ).add_to(mapa)
+
+    folium.LayerControl().add_to(mapa)
+
+    return mapa._repr_html_()

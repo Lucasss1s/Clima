@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar de lluvia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            {% if 'usuario_id' in session %}
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
+            <a href="/radar">Radar de lluvia</a>
+        </div>
+    </nav>
+
+    <div id="mapa" style="width: 100%; height: 500px;">
+        {{ mapa_html|safe }}
+    </div>
+
+</body>
+</html>
