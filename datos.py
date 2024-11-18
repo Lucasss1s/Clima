@@ -29,6 +29,7 @@ def obtener_clima_actual(ciudad):
         }
         return clima
 
+
 def obtener_pronostico(ciudad):
     url = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
     res = requests.get(url)
@@ -45,11 +46,10 @@ def obtener_pronostico(ciudad):
             pronostico_por_dia[dia].append({'fecha': item['dt_txt'], 'temp': temp, 'descripcion': descripcion})
     return pronostico_por_dia
 
-<<<<<<< HEAD
 
 
 
-# Función para obtener provincias o estados usando la API de Geonames
+# Funcines para obtener provincias 
 def obtener_provincias_o_estados_api(ciudad):
     geonames_usuario = "lucass1s" 
     url_ciudad = f"http://api.geonames.org/searchJSON?q={ciudad}&maxRows=1&username={geonames_usuario}"
@@ -108,56 +108,58 @@ def obtener_provincias_y_clima(ciudad):
 
 
 
-=======
->>>>>>> test
 # Scrap para obtener datos del clima del mes actual
-def obtener_clima_mes_actual():
-    url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
-    response = requests.get(url)
+url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
+response = requests.get(url)
 
-        clima = soup.find_all('span', class_='city-month__day-temperature')  
-        fecha = soup.find_all('div', class_='city-month__day-date') 
-        estado_clima = soup.find_all('span', class_='city-month__day-icon')  
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-        fechas = []
-        temperaturas_max = []
-        temperaturas_min = []
-        estados = []
+    clima = soup.find_all('span', class_='city-month__day-temperature')  
+    fecha = soup.find_all('div', class_='city-month__day-date') 
+    estado_clima = soup.find_all('span', class_='city-month__day-icon')  
 
-        for i in range(len(fecha)):
-            fecha_dia = fecha[i].get_text(strip=True)
-            temperaturas = clima[i].get_text(strip=True)
-            temp_max = temperaturas[:4]  
-            temp_min = temperaturas[4:]  
-            icon_class = estado_clima[i].get('class')
+    fechas = []
+    temperaturas_max = []
+    temperaturas_min = []
+    estados = []
 
-            if any('rain' in clase for clase in icon_class):
-                estado = 'Lluvia'
-            elif any('cloud' in clase for clase in icon_class):
-                estado = 'Nublado'
-            elif any('snow' in clase for clase in icon_class):
-                estado = 'Nieve'
-            elif any('storm' in clase for clase in icon_class):
-                estado = 'Tormenta'
-            elif any('sun' in clase for clase in icon_class):
-                estado = 'Soleado'
-            
-            fechas.append(fecha_dia)
-            temperaturas_max.append(temp_max)
-            temperaturas_min.append(temp_min)
-            estados.append(estado)
+    for i in range(len(fecha)):
 
-        df_clima = pd.DataFrame({
-            'Fecha': fechas,
-            'Temperatura Máxima': temperaturas_max,
-            'Temperatura Mínima': temperaturas_min,
-            'Estado del Clima': estados
-        })
+        fecha_dia = fecha[i].get_text(strip=True)
 
-        return df_clima
+        temperaturas = clima[i].get_text(strip=True)
+        temp_max = temperaturas[:4]  
+        temp_min = temperaturas[4:]  
+
+        icon_class = estado_clima[i].get('class')
+        
+        if any('rain' in clase for clase in icon_class):
+            estado = 'Lluvia'
+        elif any('cloud' in clase for clase in icon_class):
+            estado = 'Nublado'
+        elif any('snow' in clase for clase in icon_class):
+            estado = 'Nieve'
+        elif any('storm' in clase for clase in icon_class):
+            estado = 'Tormenta'
+        elif any('sun' in clase for clase in icon_class):
+            estado = 'Soleado'
+        
+
+        fechas.append(fecha_dia)
+        temperaturas_max.append(temp_max)
+        temperaturas_min.append(temp_min)
+        estados.append(estado)
+
+    df_clima = pd.DataFrame({
+        'Fecha': fechas,
+        'Temperatura Máxima': temperaturas_max,
+        'Temperatura Mínima': temperaturas_min,
+        'Estado del Clima': estados
+    })
+
+    #print(df_clima.head(30))  
 
     else:
         print(f'Error al acceder a la página: {response.status_code}')
