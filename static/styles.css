@@ -127,4 +127,59 @@ h2 {
 }
 
 
+.tabla-clima {
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.tabla-clima td {
+    padding: 10px; 
+    vertical-align: middle;
+    border: rgba(49, 49, 49, 0.685);
+}
+
+.card-clima-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 8px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 200px; 
+    max-width: 200px; 
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.card-clima-horizontal .icono {
+    flex: 0.3;
+    font-size: 30px; 
+    text-align: center;
+    margin-right: 5px; 
+}
+
+.card-clima-horizontal .detalles {
+    flex: 0.7;
+    text-align: left;
+    overflow: hidden; 
+}
+
+.card-clima-horizontal .detalles h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.card-clima-horizontal .detalles p {
+    margin: 5px 0 0 0;
+    font-size: 13px;
+}
+
+
 

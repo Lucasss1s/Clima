@@ -62,8 +62,51 @@
         </div>
     {% endif %}
 
+    {% if provincias_o_estados %}
+    <h3>Principales ciudades o provincias</h3>
+    <table class="tabla-clima">
+        <tr>
+            {% for provincia in provincias_o_estados %}
+                <td>
+                    <div class="card-clima-horizontal">
+                        <div class="icono">
+                            {% if clima_por_provincia[provincia] %}
+                                {% if 'clear' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☀️
+                                {% elif 'rain' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    🌧️
+                                {% elif 'cloud' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                    ☁️
+                                {% else %}
+                                    🌩️
+                                {% endif %}
+                            {% else %}
+                                ❓
+                            {% endif %}
+                        </div>
+                        <div class="detalles">
+                            <h4>{{ provincia }}</h4>
+                            {% if clima_por_provincia[provincia] %}
+                                <p>{{ clima_por_provincia[provincia]['temp'] }}°C</p>
+                            {% else %}
+                                <p>No disponible</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                {% if loop.index % 4 == 0 %} <!-- Agrupar en filas de 4 -->
+        </tr><tr>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+    {% endif %}
+
+
+
+    
 
     <!--Grafico de temperaturas maximas-->
-    <img  src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;">
+   <!--  <img  src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;"> -->
 </body>
 </html>
