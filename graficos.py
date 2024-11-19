@@ -9,5 +9,5 @@ def crear_grafico(pronostico_por_dia):
     plt.xlabel("Días")
     plt.ylabel("Temperatura (°C)")
     plt.grid(visible=True)
-    plt.savefig("static/grafico_temperaturas.png")
+    #plt.savefig("static/grafico_temperaturas.png")
     plt.close()
