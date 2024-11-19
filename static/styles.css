@@ -60,6 +60,7 @@ form {
     max-width: 500px;
     margin-top: 40px;
     margin-bottom: 40px;
+    position: relative;  
 }
 
 form input[type="text"] {
@@ -69,6 +70,12 @@ form input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+/* Estilo para el datalist del historial */
+form input[type="text"]:focus {
+    border-color: #007bff;
 }
 
 form button {
@@ -280,6 +287,13 @@ nav a:hover {
     background-color: #575757;
 }
 
+.titulo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    margin-left: 10px;
+}
+
 .menu-links {
     display: flex;
     gap: 20px;
@@ -287,6 +301,7 @@ nav a:hover {
     width: 100%;
     padding-right: 20px;  
 }
+
 /* Estilos para el menú desplegable */
 .dropdown {
     position: relative;
@@ -295,7 +310,7 @@ nav a:hover {
 }
 
 .dropdown-btn {
-    background-color: #4CAF50; 
+    background-color: #007bff; 
     color: white;
     padding: 10px;
     font-size: 16px;
@@ -305,7 +320,7 @@ nav a:hover {
 }
 
 .dropdown-btn:hover {
-    background-color: #45a049;
+    background-color: #6187af;
 }
 
 .dropdown-content {
@@ -337,4 +352,73 @@ nav a:hover {
     display: block;
 }
 
+datalist {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+datalist option {
+    background-color: #ffffff;
+    padding: 5px;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+datalist option:hover {
+    background-color: #f1f1f1;
+}
+
+/* Estilos del menú desplegable del historial*/
+.menu-historial {
+    position: absolute;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 20px);
+    padding: 10px;
+    display: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    top: 100%; 
+    left: 0;  
+    margin-top: 5px; 
+}
+
+.ciudad-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.ciudad-item:hover {
+    background-color: #f0f0f0;
+}
+
+.ciudad-item a {
+    text-decoration: none; 
+    color: #3388cc; 
+}
+
+.ciudad-item a:hover {
+    color: #0066cc; 
+}
+
+.favorito-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: gold;
+    transition: color 0.3s ease; 
+}
+
+.favorito-btn:hover {
+    background: none; 
+    color: #ffcc00; 
+    transform: scale(1.1); 
+}
 

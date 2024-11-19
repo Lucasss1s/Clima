@@ -29,6 +29,39 @@ def crear_tabla_usuario(conn):
     except Error as e:
         print(f"Error al crear la tabla: {e}")
 
+def crear_tabla_busquedas(conn):
+    try:
+        cursor = conn.cursor()
+        sql_crear_tabla_busquedas = """
+        CREATE TABLE IF NOT EXISTS busquedas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            ciudad TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES Usuarios (id_usuario)
+        );
+        """
+        cursor.execute(sql_crear_tabla_busquedas)
+        print("Tabla 'busquedas' creada exitosamente.")
+    except Error as e:
+        print(f"Error al crear la tabla de búsquedas: {e}")
+
+def crear_tabla_favoritos(conn):
+    try:
+        cursor = conn.cursor()
+        sql_crear_tabla_favoritos = """
+        CREATE TABLE IF NOT EXISTS favoritos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
+            ciudad TEXT NOT NULL,
+            FOREIGN KEY (usuario_id) REFERENCES Usuarios (id_usuario)
+        );
+        """
+        cursor.execute(sql_crear_tabla_favoritos)
+        print("Tabla 'favoritos' creada exitosamente.")
+    except Error as e:
+        print(f"Error al crear la tabla de favoritos: {e}")
+
+
 def agregar_usuario(conn, nombre, email, contraseña):
     try:
         cursor = conn.cursor()
@@ -98,3 +131,61 @@ def eliminar_usuario(conn, id_usuario):
             print(f"No se encontró el usuario con ID {id_usuario}.")
     except Error as e:
         print(f"Error al eliminar el usuario: {e}")
+
+# Funciones de búsquedas
+def guardar_busqueda(conn, usuario_id, ciudad):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO busquedas (usuario_id, ciudad) VALUES (?, ?)", (usuario_id, ciudad))
+    conn.commit()
+
+def obtener_busquedas(conn, usuario_id):
+    cursor = conn.cursor()
+    sql_obtener_busquedas = "SELECT ciudad FROM busquedas WHERE usuario_id = ? ORDER BY id DESC"
+    cursor.execute(sql_obtener_busquedas, (usuario_id,))
+    return [fila[0] for fila in cursor.fetchall()]
+
+def guardar_favorito(conn, usuario_id, ciudad):
+    try:
+        cursor = conn.cursor()
+        # Verificamos si la ciudad ya está guardada como favorito
+        sql_comprobar_favorito = "SELECT * FROM favoritos WHERE usuario_id = ? AND ciudad = ?"
+        cursor.execute(sql_comprobar_favorito, (usuario_id, ciudad))
+        if cursor.fetchone() is None:  # Si no existe, la insertamos
+            sql_guardar_favorito = "INSERT INTO favoritos (usuario_id, ciudad) VALUES (?, ?)"
+            cursor.execute(sql_guardar_favorito, (usuario_id, ciudad))
+            conn.commit()
+            print(f"Ciudad '{ciudad}' guardada como favorito para el usuario con ID {usuario_id}.")
+        else:
+            print("La ciudad ya está en tus favoritos.")
+    except Error as e:
+        print(f"Error al guardar la ciudad como favorito: {e}")
+
+def obtener_favoritos(conn, usuario_id):
+    cursor = conn.cursor()
+    sql_obtener_favoritos = "SELECT ciudad FROM favoritos WHERE usuario_id = ? ORDER BY id DESC"
+    cursor.execute(sql_obtener_favoritos, (usuario_id,))
+    return [fila[0] for fila in cursor.fetchall()]
+
+def eliminar_favorito(conn, usuario_id, ciudad):
+    try:
+        cursor = conn.cursor()
+        sql_eliminar_favorito = "DELETE FROM favoritos WHERE usuario_id = ? AND ciudad = ?"
+        cursor.execute(sql_eliminar_favorito, (usuario_id, ciudad))
+        conn.commit()
+        if cursor.rowcount > 0:
+            print(f"Ciudad '{ciudad}' eliminada de los favoritos del usuario con ID {usuario_id}.")
+        else:
+            print(f"No se encontró la ciudad '{ciudad}' en los favoritos del usuario.")
+    except Error as e:
+        print(f"Error al eliminar el favorito: {e}")
+
+# Función para borrar el historial de un usuario
+def borrar_historial_usuario(usuario_id):
+    conn = crear_conexion('usuarios.db')
+    cursor = conn.cursor()
+    
+    cursor.execute("DELETE FROM busquedas WHERE usuario_id = ?", (usuario_id,))
+    conn.commit()
+    conn.close()
+
+

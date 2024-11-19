@@ -10,8 +10,14 @@
 </head>
 <body>
     <nav>
+        <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
+            <a href="/radar">Radar de lluvia</a>
+            {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
+            <a href="{{ url_for('usuarios_admin') }}">ABM</a>
+            {% endif %}
+
             {% if 'usuario_id' in session %}
                 <div class="dropdown">
                     <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
@@ -28,8 +34,24 @@
         </div>
     </nav>
 
-    <form method="post">
-        <input type="text" name="ciudad" placeholder="Ingresar ciudad" required>
+    <form method="post" style="position: relative";>
+        <input 
+            type="text" 
+            id="ciudad-input" 
+            name="ciudad" 
+            placeholder="Ingresar ciudad" 
+            autocomplete="off" 
+            required 
+            onclick="toggleHistorialMenu()"
+        >
+        <div id="menu-historial" class="menu-historial" style="display: none;">
+            {% for ciudad in historial_busquedas %}
+            <div class="ciudad-item">
+                <a href="{{ url_for('index') }}?ciudad={{ ciudad }}">📍 {{ ciudad }}</a>
+                <button type="button" class="favorito-btn" onclick="agregarAFavoritos('{{ ciudad }}')">⭐</button>
+            </div>
+            {% endfor %}
+        </div>
         <button type="submit">Mostrar clima</button>
     </form>
 
@@ -39,14 +61,12 @@
             <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
         </div>
 
-        <!-- Clima actual -->
         <div class="dias-botones">
             {% for dia in pronostico_por_dia %}
                 <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
             {% endfor %}
         </div>
 
-        <!-- Clima por dia -->
         <div class="weather-container">
             {% for dia, pronosticos in pronostico_por_dia.items() %}
                 <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
