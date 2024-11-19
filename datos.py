@@ -139,7 +139,7 @@ def obtener_provincias_y_clima(ciudad):
 
 # Scrap para obtener datos del clima del mes actual
 def scrap_clima(provincia):
-    url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
+    url = 'https://www.meteoprog.com/es/weather/{}/month/'.format(provincia)
 
     response = requests.get(url)
 

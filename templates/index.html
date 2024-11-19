@@ -13,7 +13,6 @@
         <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
-            <a href="/radar">Radar de lluvia</a>
             {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
             <a href="{{ url_for('usuarios_admin') }}">ABM</a>
             {% endif %}
@@ -56,10 +55,27 @@
     </form>
 
     {% if ciudad %}
-        <h2>Tiempo en {{ ciudad }}</h2>
-        <div class="current-weather">
-            <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
+        <div class="clima-card">
+            <div class="clima-header">
+                <h2>Tiempo en {{ ciudad }}</h2>
+                <div class="clima-icon">
+                    {% if 'clear' in clima_actual.description %}
+                        ☀️
+                    {% elif 'rain' in clima_actual.description %}
+                        🌧️
+                    {% elif 'cloud' in clima_actual.description %}
+                        ☁️
+                    {% else %}
+                        🌩️
+                    {% endif %}
+                </div>
+            </div>
+            <div class="clima-info">
+                <p class="temp">{{ clima_actual.temp }}°C</p>
+                <p class="description">{{ clima_actual.description }}</p>
+            </div>
         </div>
+    
 
         <div class="dias-botones">
             {% for dia in pronostico_por_dia %}

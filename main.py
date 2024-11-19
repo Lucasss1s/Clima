@@ -1,5 +1,3 @@
-from flask import Flask, render_template, request, session
-from datos import *
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from datos import *
 from graficos import *
@@ -106,7 +104,7 @@ def radar():
 #Graficos
 @app.route('/graficos', methods=['GET'])
 def graficos():
-    provincia = 'Buenosaires'  
+    provincia = session.get('ciudad', 'miami') 
     df_clima = scrap_clima(provincia)
     
     if df_clima is not None:

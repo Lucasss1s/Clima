@@ -266,6 +266,57 @@ h2 {
     font-size: 13px;
 }
 
+.clima-card {
+    background: linear-gradient(135deg, #4fc3f7, #1e88e5);
+    color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clima-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.clima-header {
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.clima-header h2 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.clima-icon {
+    font-size: 3rem;
+}
+
+.clima-info {
+    font-size: 1.2rem;
+}
+
+.clima-info .temp {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.clima-info .description {
+    text-transform: capitalize;
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+
 /* Barra de navegación */
 nav {
     background-color: #333;
