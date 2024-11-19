@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session, abort
 import requests
 from datos import *
 from graficos import *
@@ -35,10 +35,24 @@ def index():
         # Clima para cada provincia
         for provincia in provincias_o_estados:
             clima_por_provincia[provincia] = obtener_clima_actual(provincia)
-
-
-        # Grafico
-        crear_grafico(pronostico_por_dia)
+        
+        # Guardar datos en la sesión
+        session['ciudad'] = ciudad
+        session['clima_actual'] = clima_actual
+        session['pronostico_por_dia'] = pronostico_por_dia
+        session['provincias_o_estados'] = provincias_o_estados
+        session['pais_actual'] = pais_actual
+        session['clima_por_provincia'] = clima_por_provincia
+    else:
+        # Recuperar datos de la sesión si existen
+        ciudad = session.get('ciudad', None)
+        clima_actual = session.get('clima_actual', None)
+        pronostico_por_dia = session.get('pronostico_por_dia', [])
+        provincias_o_estados = session.get('provincias_o_estados', [])
+        pais_actual = session.get('pais_actual', None)
+        clima_por_provincia = session.get('clima_por_provincia', {})
+            
+        
     
     return render_template('index.html', ciudad=ciudad, pronostico_por_dia=pronostico_por_dia, clima_actual=clima_actual,
                             provincias_o_estados=provincias_o_estados,pais_actual=pais_actual, clima_por_provincia=clima_por_provincia)
@@ -57,6 +71,29 @@ app.add_url_rule('/logout', view_func=logout)
 def radar():
     mapa_html = crear_radar() 
     return render_template('radar.html', mapa_html=mapa_html)
+
+
+
+
+
+#Graficos
+@app.route('/graficos', methods=['GET'])
+def graficos():
+    provincia = 'Buenosaires'  
+    df_clima = scrap_clima(provincia)
+    
+    if df_clima is not None:
+        grafico_temp = grafico_temperaturas(df_clima)
+        grafico_estado = grafico_estado_clima(df_clima)
+        grafico_comb = grafico_combinado(df_clima)
+
+        return render_template('graficos.html', grafico_temp=grafico_temp, grafico_estado=grafico_estado, grafico_comb=grafico_comb)
+    else:
+        abort(500)  
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

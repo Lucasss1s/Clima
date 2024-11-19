@@ -5,18 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script>
-        function mostrarPronostico(dia) {
-            const dias = document.querySelectorAll('.pronostico-dia');
-            dias.forEach(d => d.style.display = 'none');  
-            document.getElementById(dia).style.display = 'block';  
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-        function toggleMenu() {
-            var dropdownContent = document.getElementById('dropdown-content');
-            dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
-        }
-    </script>
 </head>
 <body>
     <nav>
@@ -34,6 +24,7 @@
                 <a href="/login">Iniciar Sesión</a>
             {% endif %}
             <a href="/radar">Radar de lluvia</a>
+            <a href="/graficos">Graficos</a>
         </div>
     </nav>
 
@@ -61,24 +52,59 @@
                 <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
                     <h3>Pronóstico para {{ dia }}</h3>
                     {% for pronos in pronosticos %}
-                        <div class="weather-card">
-                            <div class="icon">
-                                {% if 'clear' in pronos.descripcion.lower() %}
-                                    ☀️
-                                {% elif 'rain' in pronos.descripcion.lower() %}
-                                    🌧️
-                                {% elif 'cloud' in pronos.descripcion.lower() %}
-                                    ☁️
-                                {% else %}
-                                    🌩️
-                                {% endif %}
+                    <div class="weather-card">
+                        <div class="card-header">
+                            <div class="hora-icono">
+                                <p class="hora">{{ pronos.hora }}</p>
+                                <div class="icono">
+                                    {% if 'clear' in pronos.descripcion.lower() %}
+                                        ☀️
+                                    {% elif 'rain' in pronos.descripcion.lower() %}
+                                        🌧️
+                                    {% elif 'cloud' in pronos.descripcion.lower() %}
+                                        ☁️
+                                    {% else %}
+                                        🌩️
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="detalles">
-                                <p><strong>Fecha:</strong> {{ pronos.fecha }}</p>
-                                <p><strong>Temperatura:</strong> {{ pronos.temp }}°C</p>
-                                <p><strong>Descripción:</strong> {{ pronos.descripcion }}</p>
+                            <div class="temperatura">
+                                <p>{{ pronos.temp }}°C</p>
+                            </div>
+                            <div class="descripcion">
+                                <div>{{ pronos.descripcion }}</div>
+                                <div class="sensacion-termica">Sensación T. {{ pronos.sensacion_termica }}°</div>
+                            </div>
+                            <div class="viento">
+                                <div>↗️ {{ pronos.viento_direccion }}</div>
+                                <div>{{ pronos.viento }} km/h</div>
+                            </div>
+                            <div class="expand-icon">
+                                <span onclick="toggleDetails(this)" class="fas fa-chevron-down"></span>
                             </div>
                         </div>
+                    
+                        <div class="details-table" style="display: none;">
+                            <table>
+                                <tr>
+                                    <td><span class="icono">💧</span><span class="texto">Lluvia<br>{{ pronos.lluvia }} mm</span></td>
+                                    <td><span class="icono">🌡️</span><span class="texto">Punto de rocío<br>{{ pronos.punto_rocio }}°C</span></td>
+                                    <td><span class="icono">🌫️</span><span class="texto">Humedad<br>{{ pronos.humedad }}%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="icono">🌀</span><span class="texto">Presión<br>{{ pronos.presion }} hPa</span></td>
+                                    <td><span class="icono">📏</span><span class="texto">Visibilidad<br>{{ pronos.visibilidad }} km</span></td>
+                                    <td><span class="icono">🏔️</span><span class="texto">Cota de nieve<br>{{ pronos.cota_nieve }} m</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="icono">🌥️</span><span class="texto">Nubosidad<br>{{ pronos.nubosidad }}%</span></td>
+                                    <td><span class="icono">💨</span><span class="texto">Ráfagas<br>{{ pronos.rafagas }} km/h</span></td>
+                                    <td><span class="icono">🌁</span><span class="texto">Niebla<br>{{ pronos.niebla }}</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                    </div>
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -127,9 +153,34 @@
 
 
 
-    
 
-    <!--Grafico de temperaturas maximas-->
-   <!--  <img  src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;"> -->
+
+    <script>
+    function mostrarPronostico(dia) {
+        const dias = document.querySelectorAll('.pronostico-dia');
+        dias.forEach(d => d.style.display = 'none');  
+        document.getElementById(dia).style.display = 'block';  
+    }
+
+    function toggleMenu() {
+        var dropdownContent = document.getElementById('dropdown-content');
+        dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function toggleDetails(icon) {
+        const detailsTable = icon.parentElement.parentElement.nextElementSibling;
+        if (detailsTable.style.display === "none") {
+            detailsTable.style.display = "block";
+            icon.classList.remove("fa-chevron-down");
+            icon.classList.add("fa-chevron-up");
+        } else {
+            detailsTable.style.display = "none";
+            icon.classList.remove("fa-chevron-up");
+            icon.classList.add("fa-chevron-down");
+        }
+    }
+
+    
+    </script>
 </body>
 </html>

@@ -6,6 +6,7 @@ from flask import render_template, request, redirect, url_for, flash, session
 import folium
 from bd.usuario import *
 from graficos import *
+from collections import OrderedDict
 
 # Funciones para traer el clima actual y a 5 días
 def obtener_clima_actual(ciudad):
@@ -25,18 +26,53 @@ def obtener_pronostico(ciudad):
     url = f"https://api.openweathermap.org/data/2.5/forecast?q={ciudad}&appid=36702f1bcf086e4be0e9d8ecb12c2147&units=metric"
     res = requests.get(url)
     pronostico_por_dia = {}
+
     if res.status_code == 200:
         data = res.json()
         for item in data['list']:
             fecha = datetime.strptime(item['dt_txt'], '%Y-%m-%d %H:%M:%S')
             dia = fecha.strftime('%A')
+            hora = fecha.strftime('%H:%M')  
+
             if dia not in pronostico_por_dia:
                 pronostico_por_dia[dia] = []
-            temp = item['main']['temp']
-            descripcion = item['weather'][0]['description']
-            pronostico_por_dia[dia].append({'fecha': item['dt_txt'], 'temp': temp, 'descripcion': descripcion})
-    return pronostico_por_dia
 
+            temp = item['main']['temp']
+            sensacion_termica = item['main']['feels_like']
+            humedad = item['main']['humidity']
+            presion = item['main']['pressure']
+            punto_rocio = item['main']['temp_min'] 
+            viento_velocidad = item['wind']['speed']
+            viento_direccion = item['wind']['deg']
+            nubosidad = item['clouds']['all']
+            visibilidad = item.get('visibility', 0) / 1000  
+            lluvia = item.get('rain', {}).get('3h', 0) 
+            rafagas = item['wind'].get('gust', 0)
+            niebla = 'Sí' if 'mist' in item['weather'][0]['description'].lower() else 'No'
+            cota_nieve = item.get('snow', {}).get('3h', 0)  
+            
+            descripcion = item['weather'][0]['description']
+
+            pronostico_por_dia[dia].append({
+                'fecha': item['dt_txt'],
+                'hora' : hora,
+                'temp': temp,
+                'sensacion_termica': sensacion_termica,
+                'humedad': humedad,
+                'presion': presion,
+                'punto_rocio': punto_rocio,
+                'viento': viento_velocidad,
+                'viento_direccion': viento_direccion,
+                'nubosidad': nubosidad,
+                'visibilidad': visibilidad,
+                'lluvia': lluvia,
+                'rafagas': rafagas,
+                'niebla': niebla,
+                'cota_nieve': cota_nieve,
+                'descripcion': descripcion
+            })
+
+    return pronostico_por_dia
 
 
 
@@ -99,60 +135,61 @@ def obtener_provincias_y_clima(ciudad):
 
 
 # Scrap para obtener datos del clima del mes actual
-url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
+def scrap_clima(provincia):
+    url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
 
-response = requests.get(url)
+    response = requests.get(url)
 
-if response.status_code == 200:
-    soup = BeautifulSoup(response.text, 'html.parser')
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    clima = soup.find_all('span', class_='city-month__day-temperature')  
-    fecha = soup.find_all('div', class_='city-month__day-date') 
-    estado_clima = soup.find_all('span', class_='city-month__day-icon')  
+        clima = soup.find_all('span', class_='city-month__day-temperature')  
+        fecha = soup.find_all('div', class_='city-month__day-date') 
+        estado_clima = soup.find_all('span', class_='city-month__day-icon')  
 
-    fechas = []
-    temperaturas_max = []
-    temperaturas_min = []
-    estados = []
+        fechas = []
+        temperaturas_max = []
+        temperaturas_min = []
+        estados = []
 
-    for i in range(len(fecha)):
+        for i in range(len(fecha)):
 
-        fecha_dia = fecha[i].get_text(strip=True)
+            fecha_dia = fecha[i].get_text(strip=True)
 
-        temperaturas = clima[i].get_text(strip=True)
-        temp_max = temperaturas[:4]  
-        temp_min = temperaturas[4:]  
+            temperaturas = clima[i].get_text(strip=True)
+            temp_max = temperaturas[:4]  
+            temp_min = temperaturas[4:]  
 
-        icon_class = estado_clima[i].get('class')
-        
-        if any('rain' in clase for clase in icon_class):
-            estado = 'Lluvia'
-        elif any('cloud' in clase for clase in icon_class):
-            estado = 'Nublado'
-        elif any('snow' in clase for clase in icon_class):
-            estado = 'Nieve'
-        elif any('storm' in clase for clase in icon_class):
-            estado = 'Tormenta'
-        elif any('sun' in clase for clase in icon_class):
-            estado = 'Soleado'
-        
+            icon_class = estado_clima[i].get('class')
+            
+            if any('rain' in clase for clase in icon_class):
+                estado = 'Lluvia'
+            elif any('cloud' in clase for clase in icon_class):
+                estado = 'Nublado'
+            elif any('snow' in clase for clase in icon_class):
+                estado = 'Nieve'
+            elif any('storm' in clase for clase in icon_class):
+                estado = 'Tormenta'
+            elif any('sun' in clase for clase in icon_class):
+                estado = 'Soleado'
+            
 
-        fechas.append(fecha_dia)
-        temperaturas_max.append(temp_max)
-        temperaturas_min.append(temp_min)
-        estados.append(estado)
+            fechas.append(fecha_dia)
+            temperaturas_max.append(temp_max)
+            temperaturas_min.append(temp_min)
+            estados.append(estado)
 
-    df_clima = pd.DataFrame({
-        'Fecha': fechas,
-        'Temperatura Máxima': temperaturas_max,
-        'Temperatura Mínima': temperaturas_min,
-        'Estado del Clima': estados
-    })
+        df_clima = pd.DataFrame({
+            'Fecha': fechas,
+            'Temperatura Máxima': temperaturas_max,
+            'Temperatura Mínima': temperaturas_min,
+            'Estado del Clima': estados
+        })
 
-    #print(df_clima.head(30))  
+        return df_clima 
 
-else:
-    print(f'Error al acceder a la página: {response.status_code}')
+    else:
+        print(f'Error al acceder a la página: {response.status_code}')
 
 
 

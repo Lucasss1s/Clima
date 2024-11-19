@@ -7,6 +7,48 @@ body {
     align-items: center;
 }
 
+.container {
+    background-color: #fff7e6;  
+}
+
+nav {
+    background-color: #333;  
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav .menu-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+nav .menu-links a:hover {
+    background-color: #555;  
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;  
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;  
+}
+
 form {
     display: flex;
     justify-content: center;
@@ -51,71 +93,107 @@ h2 {
     margin-top: 0;
 }
 
-.weather-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
-    max-width: 600px;
-}
 
 .weather-card {
-    background-color: #ffffff;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
     padding: 15px;
+    background-color: #fff;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.hora-icono {
+    display: flex;
     align-items: center;
-    font-size: 14px;
-    color: #555;
-    transition: transform 0.3s ease;
+    gap: 10px; 
 }
 
-.weather-card:hover {
-    transform: translateY(-5px);
-}
-
-.weather-card strong {
+.hora {
+    font-size: 1em;
+    margin: 9px 0 0 0;
     font-weight: bold;
-    color: #333;
 }
 
-.weather-card .temp {
-    font-size: 24px;
-    color: #007bff;
+.icono {
+    font-size: 2em; 
 }
 
-.weather-card .detalles {
-    flex: 1;
-    padding-left: 15px;
+.temperatura {
+    font-size: 1.05em;
+    font-weight: bold;
+    margin: 0 20px 0 70px;
 }
 
-.weather-card .detalles p {
-    margin: 2px 0;
+.descripcion {
+    font-size: 1em;
+    margin: 10px 0 0 0;
 }
 
-.weather-card .icon {
-    font-size: 30px;
-    color: #007bff;
+.sensacion-termica {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0px;
 }
 
-.current-weather {
-    margin-bottom: 20px;
-    font-size: 18px;
-    color: #007bff;
+.viento {
+    font-size: 0.9em;
+    text-align: center;
+    margin: 10px 0 0 70px;
 }
 
-.weather-card .toggle-detalles {
-    background: none;
-    border: none;
-    font-size: 16px;
+.expand-icon {
+    font-size: 1em;
     cursor: pointer;
     color: #007bff;
-    margin-top: 5px;
-    transition: transform 0.3s ease;
+    user-select: none;
+    margin: 20px 0 0 100px;
 }
+
+/* Tabla desplegable */
+.details-table {
+    margin-top: 15px;
+    font-size: 0.85em;
+    background-color: #f8f8f8;
+    padding: 12px;
+    border-top: 1px solid #ddd;
+}
+
+.details-table table {
+    width: 100%;
+    border-collapse: collapse; 
+    text-align: left; 
+}
+
+.details-table td {
+    padding: 8px; 
+    font-weight: bold;
+    color: #333;
+    vertical-align: middle;
+}
+
+.details-table td .icono {
+    font-size: 1.5em;
+    vertical-align: middle; 
+    margin-right: 8px; 
+}
+
+.details-table td .texto {
+    display: inline-block; 
+    font-size: 1em; 
+    vertical-align: middle; 
+    line-height: 1.4; 
+}
+
 
 .extra-detalles {
     margin-top: 10px;
@@ -213,11 +291,11 @@ nav a:hover {
 .dropdown {
     position: relative;
     display: inline-block;
-    z-index: 10;  /* Asegura que el menú esté por encima de otros elementos */
+    z-index: 10;  
 }
 
 .dropdown-btn {
-    background-color: #4CAF50; /* Verde */
+    background-color: #4CAF50; 
     color: white;
     padding: 10px;
     font-size: 16px;
@@ -231,15 +309,15 @@ nav a:hover {
 }
 
 .dropdown-content {
-    display: none; /* Inicialmente oculto */
+    display: none; 
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Asegura que el contenido esté encima de otros elementos */
+    z-index: 1000; 
     border-radius: 5px;
     margin-top: 10px;
-    right: 0; /* Alinea el menú a la derecha */
+    right: 0; 
     padding: 0;
 }
 
@@ -248,14 +326,13 @@ nav a:hover {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+    white-space: nowrap; 
 }
 
 .dropdown-content a:hover {
     background-color: #ddd;
 }
 
-/* Mostrar el menú desplegable cuando se haga clic */
 .dropdown.open .dropdown-content {
     display: block;
 }

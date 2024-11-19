@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos del Clima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='graficos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="menu-links">
+            <a href="/">Inicio</a>
+            {% if 'usuario_id' in session %}
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
+            <a href="/radar">Radar de lluvia</a>
+            <a href="/graficos">Graficos</a>
+        </div>
+    </nav>
+    <main>
+        <div class="grafico">
+            <h2>Temperaturas Máximas y Mínimas</h2>
+            <img src="{{ grafico_temp }}" alt="Gráfico de Temperaturas">
+        </div>
+        <div class="grafico">
+            <h2>Estado del Clima</h2>
+            <img src="{{ grafico_estado }}" alt="Gráfico de Estado del Clima">
+        </div>
+        <div class="grafico">
+            <h2>Gráfico Combinado</h2>
+            <img src="{{ grafico_comb }}" alt="Gráfico Combinado">
+        </div>
+    </main>
+</body>
+</html>
