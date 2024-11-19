@@ -57,6 +57,7 @@
         <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
+            <a href="/radar">Radar de lluvia</a>
             {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
             <a href="{{ url_for('usuarios_admin') }}">ABM</a>
             {% endif %}
@@ -72,7 +73,7 @@
             {% else %}
                 <a href="/login">Iniciar Sesión</a>
             {% endif %}
-            <a href="/radar">Radar de lluvia</a>
+            
         </div>
     </nav>
 
@@ -138,7 +139,6 @@
         </div>
     {% endif %}
 
-    <img src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;">
     {% if provincias_o_estados %}
     <h3>Principales ciudades o provincias</h3>
     <table class="tabla-clima">

@@ -23,6 +23,7 @@
         <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
+            <a href="/radar">Radar de lluvia</a>
             {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
             <a href="{{ url_for('usuarios_admin') }}">ABM</a>
             {% endif %}
