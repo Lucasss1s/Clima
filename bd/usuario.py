@@ -134,14 +134,9 @@ def eliminar_usuario(conn, id_usuario):
 
 # Funciones de búsquedas
 def guardar_busqueda(conn, usuario_id, ciudad):
-    try:
-        cursor = conn.cursor()
-        sql_guardar_busqueda = "INSERT INTO busquedas (usuario_id, ciudad) VALUES (?, ?)"
-        cursor.execute(sql_guardar_busqueda, (usuario_id, ciudad))
-        conn.commit()
-        print(f"Búsqueda de '{ciudad}' guardada para el usuario con ID {usuario_id}.")
-    except Error as e:
-        print(f"Error al guardar la búsqueda: {e}")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO busquedas (usuario_id, ciudad) VALUES (?, ?)", (usuario_id, ciudad))
+    conn.commit()
 
 def obtener_busquedas(conn, usuario_id):
     cursor = conn.cursor()

@@ -4,7 +4,7 @@ from flask import render_template, request, redirect, url_for, flash, session, j
 from bd.usuario import *
 from bs4 import BeautifulSoup
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import render_template, request, redirect, url_for, flash, session
 import folium
 from bd.usuario import *
