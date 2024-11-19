@@ -200,6 +200,40 @@
         }
     }
 
+    function toggleHistorialMenu() {
+            const menuHistorial = document.getElementById('menu-historial');
+            const display = menuHistorial.style.display;
+            menuHistorial.style.display = (display === 'block') ? 'none' : 'block';
+        }
+        document.addEventListener('click', function (event) {
+            const inputCiudad = document.getElementById('ciudad-input');
+            const menuHistorial = document.getElementById('menu-historial');
+
+            if (!inputCiudad.contains(event.target) && !menuHistorial.contains(event.target)) {
+                menuHistorial.style.display = 'none';
+            }
+        });
+
+    function agregarAFavoritos(ciudad) {
+            fetch('/agregar-favorito', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ciudad: ciudad }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+            })
+            .catch(error => {
+                console.error('Error al agregar a favoritos:', error);
+            });
+        }
+
+    function cargarClimaDesdeHistorial(ciudad) {
+        window.location.href = `/?ciudad=${ciudad}`;
+    }
     
     </script>
 </body>
