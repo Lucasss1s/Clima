@@ -5,13 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <script>
+        function mostrarPronostico(dia) {
+            const dias = document.querySelectorAll('.pronostico-dia');
+            dias.forEach(d => d.style.display = 'none');  
+            document.getElementById(dia).style.display = 'block';  
+        }
+
+        function toggleMenu() {
+            var dropdownContent = document.getElementById('dropdown-content');
+            dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
 </head>
 <body>
-
     <nav>
+        <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
-            <a href="/login">Iniciar sesión</a>
+            {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
+            <a href="{{ url_for('usuarios_admin') }}">ABM</a>
+            {% endif %}
+            
+            {% if 'usuario_id' in session %}
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
+                    <div id="dropdown-content" class="dropdown-content">
+                        <a href="/favoritos">Favoritos</a>
+                        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login">Iniciar Sesión</a>
+            {% endif %}
         </div>
     </nav>
 

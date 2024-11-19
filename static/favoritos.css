@@ -1,0 +1,299 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.favorito {
+    color: #333;
+    text-align: center;
+    margin-top: 70px; 
+}
+
+/* Estilos para los formularios */
+form {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+form input[type="text"] {
+    padding: 10px;
+    width: 70%;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+form button {
+    padding: 10px;
+    width: 30%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Barra de navegación */
+nav {
+    background-color: #333;
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+nav a:hover {
+    background-color: #575757;
+}
+
+.titulo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    margin-left: 10px;
+}
+
+.menu-links {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+    width: 100%;
+    padding-right: 20px;
+}
+
+/* Estilos para el menú desplegable */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 10;
+}
+
+.dropdown-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-btn:hover {
+    background-color: #6187af;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    margin-top: 10px;
+    right: 0;
+    padding: 0;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown.open .dropdown-content {
+    display: block;
+}
+
+/* Estilos para la lista de favoritos */
+ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+}
+
+ul li {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0; 
+    width: 100%; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    justify-content: space-between; 
+}
+
+ul li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor del nombre de la ciudad y el botón de eliminar */
+ul li .ciudad-eliminar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%; 
+    text-align: left;
+}
+
+ul li .ciudad-eliminar span {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+ul li form {
+    display: inline-block;
+    margin: 0;
+}
+
+ul li form button {
+    background-color: #ff4d4d;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto;
+    max-width: 120px; 
+}
+
+ul li form button:hover {
+    background-color: #e60000;
+}
+
+/* Estilo para el botón de borrar historial */
+form button[type="submit"] {
+    background-color: #ff4d4d;
+    padding: 10px 20px;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+}
+
+form button[type="submit"]:hover {
+    background-color: #e60000;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.alert.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.alert.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* Estilos generales para las tarjetas */
+.ciudad-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    width: 100%; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ciudad-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilo para la flecha */
+.flecha {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.flecha:hover {
+    color: #0056b3;
+}
+
+/* Estilos para el clima (inicialmente oculto) */
+.clima {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.clima.visible {
+    display: block;
+}

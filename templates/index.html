@@ -11,19 +11,57 @@
             dias.forEach(d => d.style.display = 'none');  
             document.getElementById(dia).style.display = 'block';  
         }
-
+    
         function toggleMenu() {
-            var dropdownContent = document.getElementById('dropdown-content');
+            const dropdownContent = document.getElementById('dropdown-content');
             dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+        }
+        function toggleHistorialMenu() {
+            const menuHistorial = document.getElementById('menu-historial');
+            const display = menuHistorial.style.display;
+            menuHistorial.style.display = (display === 'block') ? 'none' : 'block';
+        }
+        document.addEventListener('click', function (event) {
+            const inputCiudad = document.getElementById('ciudad-input');
+            const menuHistorial = document.getElementById('menu-historial');
+            
+            if (!inputCiudad.contains(event.target) && !menuHistorial.contains(event.target)) {
+                menuHistorial.style.display = 'none';
+            }
+        });
+    
+        // Agregar a favoritos usando fetch
+        function agregarAFavoritos(ciudad) {
+            fetch('/agregar-favorito', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ciudad: ciudad }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+            })
+            .catch(error => {
+                console.error('Error al agregar a favoritos:', error);
+            });
+        }
+        function cargarClimaDesdeHistorial(ciudad) {
+            window.location.href = `/?ciudad=${ciudad}`;
         }
     </script>
 </head>
 <body>
     <nav>
+        <div class="titulo">ClimaDaVinci</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
+            {% if session.get('usuario_id') and session.get('rol') == 'admin' %}
+            <a href="{{ url_for('usuarios_admin') }}">ABM</a>
+            {% endif %}
+
             {% if 'usuario_id' in session %}
-                <!-- Menú desplegable con el nombre del usuario -->
                 <div class="dropdown">
                     <button class="dropdown-btn" onclick="toggleMenu()">{{ session['nombre_usuario'] }}</button>
                     <div id="dropdown-content" class="dropdown-content">
@@ -37,8 +75,24 @@
         </div>
     </nav>
 
-    <form method="post">
-        <input type="text" name="ciudad" placeholder="Ingresar ciudad" required>
+    <form method="post" style="position: relative";>
+        <input 
+            type="text" 
+            id="ciudad-input" 
+            name="ciudad" 
+            placeholder="Ingresar ciudad" 
+            autocomplete="off" 
+            required 
+            onclick="toggleHistorialMenu()"
+        >
+        <div id="menu-historial" class="menu-historial" style="display: none;">
+            {% for ciudad in historial_busquedas %}
+            <div class="ciudad-item">
+                <a href="{{ url_for('index') }}?ciudad={{ ciudad }}">📍 {{ ciudad }}</a>
+                <button type="button" class="favorito-btn" onclick="agregarAFavoritos('{{ ciudad }}')">⭐</button>
+            </div>
+            {% endfor %}
+        </div>
         <button type="submit">Mostrar clima</button>
     </form>
 
@@ -48,14 +102,12 @@
             <p><strong>Clima actual:</strong> {{ clima_actual.temp }}°C, {{ clima_actual.descripcion }}</p>
         </div>
 
-        <!-- Clima actual -->
         <div class="dias-botones">
             {% for dia in pronostico_por_dia %}
                 <button type="button" onclick="mostrarPronostico('{{ dia }}')">{{ dia }}</button>
             {% endfor %}
         </div>
 
-        <!-- Clima por dia -->
         <div class="weather-container">
             {% for dia, pronosticos in pronostico_por_dia.items() %}
                 <div id="{{ dia }}" class="pronostico-dia" style="display: none;">
@@ -85,7 +137,6 @@
         </div>
     {% endif %}
 
-    <!-- Gráfico de temperaturas máximas -->
     <img src="{{ url_for('static', filename='grafico_temperaturas.png') }}" alt="Gráfico de temperaturas" style="padding-top: 20px;">
 </body>
 </html>

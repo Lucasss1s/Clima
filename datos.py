@@ -1,19 +1,7 @@
 import requests
-from bs4 import BeautifulSoup
-import pandas as pd
-from datetime import datetime, timedelta
-from flask import render_template, request, redirect, url_for, flash, session
-from bd.usuario import (
-    crear_conexion, 
-    agregar_usuario, 
-    verificar_login, 
-    obtener_usuario_por_email, 
-    obtener_todos_los_usuarios, 
-    actualizar_rol_usuario, 
-    eliminar_usuario,
-    crear_tabla_usuario
-)
-from graficos import crear_grafico
+from datetime import datetime
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
+from bd.usuario import *
 
 # Funciones para traer el clima actual y a 5 días
 def obtener_clima_actual(ciudad):
@@ -41,63 +29,12 @@ def obtener_pronostico(ciudad):
             pronostico_por_dia[dia].append({'fecha': item['dt_txt'], 'temp': temp, 'descripcion': descripcion})
     return pronostico_por_dia
 
-# Scrap para obtener datos del clima del mes actual
-def obtener_clima_mes_actual():
-    url = 'https://www.meteoprog.com/es/weather/Buenosaires/month/'
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        clima = soup.find_all('span', class_='city-month__day-temperature')  
-        fecha = soup.find_all('div', class_='city-month__day-date') 
-        estado_clima = soup.find_all('span', class_='city-month__day-icon')  
-
-        fechas = []
-        temperaturas_max = []
-        temperaturas_min = []
-        estados = []
-
-        for i in range(len(fecha)):
-            fecha_dia = fecha[i].get_text(strip=True)
-            temperaturas = clima[i].get_text(strip=True)
-            temp_max = temperaturas[:4]  
-            temp_min = temperaturas[4:]  
-            icon_class = estado_clima[i].get('class')
-
-            if any('rain' in clase for clase in icon_class):
-                estado = 'Lluvia'
-            elif any('cloud' in clase for clase in icon_class):
-                estado = 'Nublado'
-            elif any('snow' in clase for clase in icon_class):
-                estado = 'Nieve'
-            elif any('storm' in clase for clase in icon_class):
-                estado = 'Tormenta'
-            elif any('sun' in clase for clase in icon_class):
-                estado = 'Soleado'
-            
-            fechas.append(fecha_dia)
-            temperaturas_max.append(temp_max)
-            temperaturas_min.append(temp_min)
-            estados.append(estado)
-
-        df_clima = pd.DataFrame({
-            'Fecha': fechas,
-            'Temperatura Máxima': temperaturas_max,
-            'Temperatura Mínima': temperaturas_min,
-            'Estado del Clima': estados
-        })
-
-        return df_clima
-
-    else:
-        print(f'Error al acceder a la página: {response.status_code}')
-        return None
-
 # Funciones de autenticación y administración de usuarios
 def inicializar_base_de_datos():
     conn = crear_conexion('usuarios.db')
-    crear_tabla_usuario(conn)  
+    crear_tabla_usuario(conn) 
+    crear_tabla_busquedas(conn)
+    crear_tabla_favoritos(conn)
     conn.close()
 
 def registro():
@@ -140,7 +77,7 @@ def login():
 def usuarios_admin():
     if 'usuario_id' not in session or session.get('rol') != 'admin':
         flash("Acceso no autorizado", 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     conn = crear_conexion('usuarios.db')
 
@@ -153,13 +90,10 @@ def usuarios_admin():
             if id_usuario and nuevo_rol:
                 actualizar_rol_usuario(conn, id_usuario, nuevo_rol)
                 conn.commit()
-                flash("Rol actualizado exitosamente.", 'success')
-
         elif accion == "eliminar":
             if id_usuario:
                 eliminar_usuario(conn, id_usuario)
                 conn.commit()
-                flash("Usuario eliminado exitosamente.", 'success')
 
         return redirect(url_for('usuarios_admin'))
 
@@ -168,13 +102,113 @@ def usuarios_admin():
 
     return render_template('usuarios_admin.html', usuarios=usuarios)
 
-def favoritos():
-    if 'usuario_id' not in session:
-        flash('Debes iniciar sesión para acceder a tus favoritos', 'warning')
-        return redirect(url_for('login'))
-    return render_template('favoritos.html')
-
 def logout():
     session.pop('usuario_id', None)
     session.pop('nombre_usuario', None)
+    session.pop('historial_busquedas', None)  
+    session.clear()
     return redirect(url_for('index'))
+
+# Funciones de busqueda
+def guardar_busqueda_usuario(ciudad):
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+    conn = crear_conexion('usuarios.db')
+
+    guardar_busqueda(conn, usuario_id, ciudad)
+    
+    conn.close()
+    return redirect(url_for('index'))
+
+def mostrar_busquedas_usuario():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+    conn = crear_conexion('usuarios.db')
+    busquedas = obtener_busquedas(conn, usuario_id)
+    conn.close()
+
+    return busquedas
+
+def guardar_favorito_usuario(usuario_id, ciudad):
+    conn = crear_conexion('usuarios.db')
+    guardar_favorito(conn, usuario_id, ciudad)
+    conn.close()
+
+def obtener_favoritos_usuario(usuario_id):
+    conn = crear_conexion('usuarios.db')
+    favoritos_lista = obtener_favoritos(conn, usuario_id)
+    conn.close()
+    return favoritos_lista
+
+def eliminar_favorito_usuario(usuario_id, ciudad):
+    conn = crear_conexion('usuarios.db')
+    eliminar_favorito(conn, usuario_id, ciudad)  
+    conn.close()
+
+def favoritos():
+    if 'usuario_id' not in session:
+        flash('Debes iniciar sesión para acceder a tus favoritos', 'error')
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+ 
+    favoritos_lista = obtener_favoritos_usuario(usuario_id)
+
+    if request.method == 'POST':
+        ciudad = request.form.get('ciudad')
+        if ciudad:
+            eliminar_favorito_usuario(usuario_id, ciudad)  
+            flash(f'Ciudad "{ciudad}" eliminada de tus favoritos.', 'success')
+            return redirect(url_for('favoritos'))
+
+    return render_template('favoritos.html', favoritos_lista=favoritos_lista)
+
+def borrar_historial_usuario(usuario_id):
+    conn = crear_conexion('usuarios.db')
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM busquedas WHERE usuario_id = ?", (usuario_id,))
+    conn.commit()
+    conn.close()
+
+def borrar_historial():
+    if 'usuario_id' not in session:
+        flash('Debes iniciar sesión para borrar el historial', 'error')
+        return redirect(url_for('login'))
+    
+    usuario_id = session['usuario_id']
+    borrar_historial_usuario(usuario_id)
+    flash('Historial borrado correctamente', 'success')
+    return redirect(url_for('favoritos'))
+
+def obtener_clima_ciudad():
+    ciudad = request.args.get('ciudad')
+    if ciudad:
+        clima_actual = obtener_clima_actual(ciudad)
+        if clima_actual:
+            return jsonify({
+                'temp': clima_actual['temp'],
+                'descripcion': clima_actual['descripcion']
+            })
+        else:
+            return jsonify({'error': 'No se pudo obtener el clima de la ciudad.'})
+    return jsonify({'error': 'Ciudad no proporcionada'})
+
+def agregar_favorito():
+    if not session.get('usuario_id'):
+        return jsonify({'message': 'Debes iniciar sesión para agregar a favoritos.'}), 401
+
+    datos = request.get_json()
+    ciudad = datos.get('ciudad')
+    usuario_id = session['usuario_id']
+    
+    try:
+        conn = crear_conexion('usuarios.db')
+        guardar_favorito(conn, usuario_id, ciudad)
+        conn.close()
+        return jsonify({'message': f'{ciudad} se agregó a favoritos exitosamente.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error al agregar a favoritos: {str(e)}'}), 500
