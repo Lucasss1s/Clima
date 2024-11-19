@@ -30,6 +30,7 @@
             {% endif %}
             <a href="/radar">Radar de lluvia</a>
             <a href="/graficos">Graficos</a>
+            <button id="toggle-dark-mode" class="dark-mode-btn">Modo Oscuro</button>
         </div>
     </nav>
 
@@ -148,43 +149,45 @@
     {% endif %}
 
     {% if provincias_o_estados %}
-    <h3>Principales ciudades o provincias</h3>
-    <table class="tabla-clima">
-        <tr>
-            {% for provincia in provincias_o_estados %}
-                <td>
-                    <div class="card-clima-horizontal">
-                        <div class="icono">
-                            {% if clima_por_provincia[provincia] %}
-                                {% if 'clear' in clima_por_provincia[provincia]['descripcion'].lower() %}
-                                    ☀️
-                                {% elif 'rain' in clima_por_provincia[provincia]['descripcion'].lower() %}
-                                    🌧️
-                                {% elif 'cloud' in clima_por_provincia[provincia]['descripcion'].lower() %}
-                                    ☁️
+    <div class="card">
+        <h3>Principales ciudades o provincias</h3>
+        <table class="tabla-clima">
+            <tr>
+                {% for provincia in provincias_o_estados %}
+                    <td>
+                        <div class="card-clima-horizontal">
+                            <div class="icono">
+                                {% if clima_por_provincia[provincia] %}
+                                    {% if 'clear' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                        ☀️
+                                    {% elif 'rain' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                        🌧️
+                                    {% elif 'cloud' in clima_por_provincia[provincia]['descripcion'].lower() %}
+                                        ☁️
+                                    {% else %}
+                                        🌩️
+                                    {% endif %}
                                 {% else %}
-                                    🌩️
+                                    ❓
                                 {% endif %}
-                            {% else %}
-                                ❓
-                            {% endif %}
+                            </div>
+                            <div class="detalles">
+                                <h4>{{ provincia }}</h4>
+                                {% if clima_por_provincia[provincia] %}
+                                    <p>{{ clima_por_provincia[provincia]['temp'] }}°C</p>
+                                {% else %}
+                                    <p>No disponible</p>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="detalles">
-                            <h4>{{ provincia }}</h4>
-                            {% if clima_por_provincia[provincia] %}
-                                <p>{{ clima_por_provincia[provincia]['temp'] }}°C</p>
-                            {% else %}
-                                <p>No disponible</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </td>
-                {% if loop.index % 4 == 0 %} <!-- Agrupar en filas de 4 -->
-        </tr><tr>
-                {% endif %}
-            {% endfor %}
-        </tr>
-    </table>
+                    </td>
+                    {% if loop.index % 4 == 0 %} 
+            </tr><tr>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
     {% endif %}
 
 
@@ -250,6 +253,19 @@
     function cargarClimaDesdeHistorial(ciudad) {
         window.location.href = `/?ciudad=${ciudad}`;
     }
+
+    document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    });
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const darkModeSetting = localStorage.getItem('darkMode');
+        if (darkModeSetting === 'enabled') {
+            document.body.classList.add('dark-mode');
+        }
+    });
     
     </script>
 </body>
